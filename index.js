@@ -1,14 +1,15 @@
+require("dotenv").config(); // Import dotenv for obscuring variables
 const mysql = require("mysql2");
 
 // Connect to database
 const db = mysql.createConnection(
   {
-    host: "localhost",
+    host: process.env.MYSQL_HOST || "localhost",
     // Your MySQL username,
-    user: "root",
+    user: process.env.MYSQL_USER || "root",
     // Your MySQL password
-    password: "",
-    database: "election",
+    password: process.env.MYSQL_PASS,
+    database: process.env.MYSQL_DB || "hremployeecli",
   },
   console.log("Connected to the election database.")
 );
