@@ -27,7 +27,7 @@ db.query(`SELECT * FROM employees WHERE id = 1`, (err, row) => {
 });
 
 // Delete a candidate
-db.query(`DELETE FROM employees WHERE id = ?`, 1, (err, result) => {
+db.query(`DELETE FROM employees WHERE id = ?`, 2, (err, result) => {
   if (err) {
     console.log(err);
   }
