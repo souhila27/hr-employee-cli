@@ -11,15 +11,15 @@ const db = mysql.createConnection(
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB || "hremployeecli",
   },
-  console.log("Connected to the election database.")
+  console.log("Connected to the hremployeecli database.")
 );
 
-db.query(`SELECT * FROM candidates`, (err, rows) => {
+db.query(`SELECT * FROM employees`, (err, rows) => {
   console.log(rows);
 });
 
 // GET a single candidate
-db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
+db.query(`SELECT * FROM employees WHERE id = 1`, (err, row) => {
   if (err) {
     console.log(err);
   }
@@ -27,7 +27,7 @@ db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
 });
 
 // Delete a candidate
-db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
+db.query(`DELETE FROM employees WHERE id = ?`, 1, (err, result) => {
   if (err) {
     console.log(err);
   }
@@ -35,9 +35,9 @@ db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
 });
 
 // Create a candidate
-const sql = `INSERT INTO candidates (id, first_name, last_name, industry_connected) 
+const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) 
               VALUES (?,?,?,?)`;
-const params = [1, "Ronald", "Firbank", 1];
+const params = ["Ronald", "Firbank", 2, 1];
 
 db.query(sql, params, (err, result) => {
   if (err) {
