@@ -136,49 +136,48 @@ function promptAddEmployee() {
 
 // Update an employee role
 function promptUpdateRole() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "firstName",
-        message: "What is the employee's first name?",
-      },
-      {
-        type: "input",
-        name: "lastName",
-        message: "What is the employee's last name?",
-      },
-      {
-        type: "number",
-        name: "roleId",
-        message: "What is the ID of the employee's role?",
-      },
-      {
-        type: "number",
-        name: "managerId",
-        message: "What is the ID of the employee's manager?",
-      },
-    ])
-    .then((answers) => {
-      addEmployee(
-        answers.firstName,
-        answers.lastName,
-        answers.roleId,
-        answers.managerId
-      );
-    });
+  db.query(`SELECT first_name, last_name FROM employees`, (err, rows) => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "option",
+          message: "Who's role do you want to update?",
+          choices: rows.map((row) => {
+            return `${row.first_name} ${row.last_name}`;
+          }),
+        },
+        {
+          type: "number",
+          name: "roleId",
+          message: "What is the new role ID of the employee?",
+        },
+      ])
+      .then((answers) => {
+        const [firstName, lastName] = answers.option.split(" ");
+        const sql = `UPDATE employees SET role_id = ${answers.roleId} 
+        WHERE first_name = "${firstName}" AND last_name = "${lastName}"`;
+
+        db.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+          }
+          console.log("Role updated", result);
+        });
+      });
+  });
 }
 
 // Delete departments, roles, employees
-function promptDelete(id, table) {
-  console.log(id, table);
-  // db.query(`DELETE FROM employees WHERE id = ?`, 2, (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   console.log(result);
-  // });
-}
+// function promptDelete(id, table) {
+//   console.log(id, table);
+//   // db.query(`DELETE FROM employees WHERE id = ?`, 2, (err, result) => {
+//   //   if (err) {
+//   //     console.log(err);
+//   //   }
+//   //   console.log(result);
+//   // });
+// }
 
 // Start of the Prompt
 async function promptStart() {
