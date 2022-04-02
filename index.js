@@ -1,6 +1,7 @@
 require("dotenv").config(); // Import dotenv for obscuring variables
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 // Connect to database
 const db = mysql.createConnection(
@@ -21,7 +22,7 @@ const promptView = (table) => {
       return;
     }
 
-    console.log(rows);
+    console.table(rows);
   });
 };
 
