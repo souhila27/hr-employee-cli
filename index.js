@@ -4,18 +4,15 @@ const inquirer = require("inquirer");
 const cTable = require("console.table");
 
 // Connect to database
-const db = mysql.createConnection(
-  {
-    host: process.env.MYSQL_HOST || "localhost",
-    user: process.env.MYSQL_USER || "root", // Your MySQL username,
-    password: process.env.MYSQL_PASS, // Your MySQL password
-    database: process.env.MYSQL_DB || "hremployeecli",
-  },
-  console.log("Connected to the hremployeecli database.")
-);
+const db = mysql.createConnection({
+  host: process.env.MYSQL_HOST || "localhost",
+  user: process.env.MYSQL_USER || "root", // Your MySQL username,
+  password: process.env.MYSQL_PASS, // Your MySQL password
+  database: process.env.MYSQL_DB || "hremployeecli",
+});
 
 // view all departments, roles, employees
-const promptView = (table) => {
+function viewAll(table) {
   db.query(`SELECT * FROM ${table}`, (err, rows) => {
     if (err) {
       console.log(`error: ${err.message}`);
@@ -24,30 +21,156 @@ const promptView = (table) => {
 
     console.table(rows);
   });
-};
+}
 
-// add a department, role, employee
-const promptAdd = (data) => {
-  console.log(data);
-  // const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
-  //               VALUES (?,?,?,?)`;
-  // const params = ["Ronald", "Firbank", 2, 1];
+function addDepartment(name) {
+  const sql = `INSERT INTO departments (name) VALUES (?)`;
+  const params = [name];
 
-  // db.query(sql, params, (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   console.log(result);
-  // });
-};
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(result);
+  });
+}
+
+function addRole(title, salary, departmentId) {
+  const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
+  const params = [title, salary, departmentId];
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(result);
+  });
+}
+
+function addEmployee(firstName, lastName, roleId, managerId) {
+  const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
+  const params = [firstName, lastName, roleId, managerId];
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(result);
+  });
+}
+
+// add a department
+function promptAddDepartment() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "department",
+        message: "What is the name of the department?",
+      },
+    ])
+    .then((answers) => {
+      addDepartment(answers.department);
+    });
+}
+
+// add a role
+function promptAddRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "What is the title of the role?",
+      },
+      {
+        type: "number",
+        name: "salary",
+        message: "What is the salary of the role?",
+      },
+      {
+        type: "number",
+        name: "departmentId",
+        message: "What is the ID of the role's department?",
+      },
+    ])
+    .then((answers) => {
+      addRole(answers.title, answers.salary, answers.departmentId);
+    });
+}
+
+// add a employee
+function promptAddEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstName",
+        message: "What is the employee's first name?",
+      },
+      {
+        type: "input",
+        name: "lastName",
+        message: "What is the employee's last name?",
+      },
+      {
+        type: "number",
+        name: "roleId",
+        message: "What is the ID of the employee's role?",
+      },
+      {
+        type: "number",
+        name: "managerId",
+        message: "What is the ID of the employee's manager?",
+      },
+    ])
+    .then((answers) => {
+      addEmployee(
+        answers.firstName,
+        answers.lastName,
+        answers.roleId,
+        answers.managerId
+      );
+    });
+}
 
 // Update an employee role
-const promptUpdateRole = (data) => {
-  console.log(data);
-};
+function promptUpdateRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "firstName",
+        message: "What is the employee's first name?",
+      },
+      {
+        type: "input",
+        name: "lastName",
+        message: "What is the employee's last name?",
+      },
+      {
+        type: "number",
+        name: "roleId",
+        message: "What is the ID of the employee's role?",
+      },
+      {
+        type: "number",
+        name: "managerId",
+        message: "What is the ID of the employee's manager?",
+      },
+    ])
+    .then((answers) => {
+      addEmployee(
+        answers.firstName,
+        answers.lastName,
+        answers.roleId,
+        answers.managerId
+      );
+    });
+}
 
 // Delete departments, roles, employees
-const promptDelete = (id, table) => {
+function promptDelete(id, table) {
   console.log(id, table);
   // db.query(`DELETE FROM employees WHERE id = ?`, 2, (err, result) => {
   //   if (err) {
@@ -55,11 +178,11 @@ const promptDelete = (id, table) => {
   //   }
   //   console.log(result);
   // });
-};
+}
 
 // Start of the Prompt
-const promptStart = () => {
-  return inquirer
+async function promptStart() {
+  await inquirer
     .prompt([
       {
         type: "list",
@@ -79,22 +202,22 @@ const promptStart = () => {
     .then((answers) => {
       switch (answers.option) {
         case "View Departments":
-          promptView("departments");
+          viewAll("departments");
           break;
         case "View Roles":
-          promptView("roles");
+          viewAll("roles");
           break;
         case "View Employees":
-          promptView("employees");
+          viewAll("employees");
           break;
         case "Add Department":
-          promptAdd();
+          promptAddDepartment();
           break;
         case "Add Role":
-          promptAdd();
+          promptAddRole();
           break;
         case "Add Employee":
-          promptAdd();
+          promptAddEmployee();
           break;
         case "Update Employee Role":
           promptUpdateRole();
@@ -104,7 +227,7 @@ const promptStart = () => {
           break;
       }
     });
-};
+}
 
 // Initiate prompt
 promptStart();
