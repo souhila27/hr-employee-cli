@@ -6,7 +6,7 @@ const cTable = require("console.table");
 // Connect to database
 const db = mysql.createConnection({
   host:  "localhost",
-  port:3306,
+  port: 3306,
   user:  "root", // Your MySQL username,
   password:'School2021$', // Your MySQL password
   database:'hremployeecli',
@@ -21,7 +21,9 @@ function viewAll(table) {
       return;
     }
 
-    console.table(rows);
+    console.table(rows)
+  ;
+  promptStart();
   });
 }
 
@@ -37,9 +39,9 @@ function addDepartment(name) {
   });
 }
 
-function addRole(title, salary, department_id) {
+function addRole(title, salary, departmentId) {
   const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
-  const params = [title, salary, department_id];
+  const params = [title, salary, departmentId];
 
   db.query(sql, params, (err, result) => {
     if (err) {
@@ -49,9 +51,9 @@ function addRole(title, salary, department_id) {
   });
 }
 
-function addEmployee(firstName, lastName, role_id, manager_id) {
+function addEmployee(firstName, lastName, roleId, managerId) {
   const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
-  const params = [firstName, lastName, role_id, manager_id];
+  const params = [firstName, lastName, roleId, managerId];
 
   db.query(sql, params, (err, result) => {
     if (err) {
@@ -97,7 +99,7 @@ function promptAddRole() {
       },
     ])
     .then((answers) => {
-      addRole(answers.title, answers.salary, answers.department_id);
+      addRole(answers.title, answers.salary, answers.departmentId);
     });
 }
 
@@ -107,31 +109,31 @@ function promptAddEmployee() {
     .prompt([
       {
         type: "input",
-        name: "first_name",
+        name: "firstName",
         message: "What is the employee's first name?",
       },
       {
         type: "input",
-        name: "last_name",
+        name: "lastName",
         message: "What is the employee's last name?",
       },
       {
         type: "number",
-        name: "role_id",
+        name: "roleId",
         message: "What is the ID of the employee's role?",
       },
       {
         type: "number",
-        name: "manager_id",
+        name: "managerId",
         message: "What is the ID of the employee's manager?",
       },
     ])
     .then((answers) => {
       addEmployee(
-        answers.first_name,
-        answers.last_name,
-        answers.role_id,
-        answers.manager_id,
+        answers.firstName,
+        answers.lastName,
+        answers.roleId,
+        answers.managerId,
       );
     });
 }
@@ -151,13 +153,13 @@ function promptUpdateRole() {
         },
         {
           type: "number",
-          name: "role_id",
+          name: "roleId",
           message: "What is the new role ID of the employee?",
         },
       ])
       .then((answers) => {
         const [firstName, lastName] = answers.option.split(" ");
-        const sql = `UPDATE employees SET role_id = ${answers.role_id} 
+        const sql = `UPDATE employees SET role_id = ${answers.roleId} 
         WHERE first_name = "${firstName}" AND last_name = "${lastName}"`;
 
         db.query(sql, (err, result) => {
