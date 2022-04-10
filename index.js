@@ -35,7 +35,8 @@ function addDepartment(name) {
     if (err) {
       console.log(err);
     }
-    console.log(result);
+    // console.log(result);
+    promptStart();
   });
 }
 
@@ -48,6 +49,7 @@ function addRole(title, salary, departmentId) {
       console.log(err);
     }
     console.log(result);
+    promptStart();
   });
 }
 
@@ -60,6 +62,7 @@ function addEmployee(firstName, lastName, roleId, managerId) {
       console.log(err);
     }
     console.log(result);
+    promptStart();
   });
 }
 
@@ -75,6 +78,7 @@ function promptAddDepartment() {
     ])
     .then((answers) => {
       addDepartment(answers.department);
+      
     });
 }
 
